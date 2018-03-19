@@ -52,6 +52,7 @@ namespace WindowsFormsApp1
             int length = input.Length - 1;
 
             //We will start looking at the center of the input and move to the left and right edges of the array from there
+            //We do this to find any larger palindromes as soon as possible so that we can stop the algorithm without having to look through the entire word
             int startingPoint = input.Length / 2;
 
             //first we will look for odd-sized palindromes
