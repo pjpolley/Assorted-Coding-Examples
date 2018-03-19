@@ -57,7 +57,10 @@ namespace WindowsFormsApp1
 
         public void RunSimulationStep()
         {
-
+            //we use multithreading to simulate multiple users or accounts trying to update a single value at the same time.
+            //in an actual real world solution, these multiple threads would be replaced by multiple independant servers trying to get and update
+            //a single server's information. That server would use some version of mutex's on a multithreaded solution like this one in order
+            //to prevent one variable from being accessed by multiple distinct users simultaneously.
             for(int i = 0; i < desiredThreads; i++)
             {
                 Thread newThread = new Thread(new ThreadStart(UpdateStocks));
@@ -70,7 +73,6 @@ namespace WindowsFormsApp1
         private void UpdateStocks()
         {
             int productToCheck =  rand.Next(0, numProducts);
-            Console.WriteLine("Modifying product " + productToCheck.ToString());
             int buyingOrSelling = rand.Next(0, 2);
 
             bool aquiredMutex = false;
@@ -83,7 +85,8 @@ namespace WindowsFormsApp1
                     products[productToCheck].productLock.WaitOne();
                     aquiredMutex = true;
                 }
-                //this will check if the tread or system that took the mutex last has broken or in some way failed to release the mutex in the default allocated time.
+                //this will check if the tread or system that took the mutex last has broken or in some way failed to release the mutex in the default
+                //allocated time. In the case that it has, the mutex will be freed so that a thread that is still active can continue its work
                 catch (AbandonedMutexException e)
                 {
                     e.Mutex.ReleaseMutex();

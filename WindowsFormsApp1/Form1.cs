@@ -21,10 +21,8 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
         }
-
-        bool BAS_simulation_ready = false;
         BuyingAndSelling BASLogic;
-
+        int threadsWanted;
 
         private void ButtonClick(object sender, EventArgs e)
         {
@@ -107,7 +105,6 @@ namespace WindowsFormsApp1
         private void Buying_And_Selling_Start_Button_Click(object sender, EventArgs e)
         {
             int productsWanted;
-            int threadsWanted;
             if(BAS_Num_Products_Input.Text.Length == 0)
             {
                 productsWanted = 1;//default value
@@ -126,7 +123,6 @@ namespace WindowsFormsApp1
                 threadsWanted = int.Parse(BAS_Num_Threads_input.Text);
             }
             BASLogic = new BuyingAndSelling(productsWanted, threadsWanted);
-            BAS_simulation_ready = true;
             BASLogic.RunSimulationStep();
 
             updateBASChart();
@@ -140,7 +136,11 @@ namespace WindowsFormsApp1
 
         private void updateBASChart()
         {
-            Thread.Sleep(200);
+
+            //we do need to busy wait for the various threads in the background to complete their tasks
+            //in a more refined solution, this would be programmed as a background worker so that the UI doesn't block on the update step
+            //but for now this should be sufficient to see that the data is being updated correctly.
+            Thread.Sleep(threadsWanted * 50);
 
             BAS_Chart.Series[0].Points.Clear();
 
